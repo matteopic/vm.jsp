@@ -483,8 +483,7 @@ a){var b=F.exec(a);b&&(b[1]=(b[1]||"").toLowerCase(),b[3]=b[3]&&new RegExp("(?:^
 								<div>Running from: <%= df.format( runningFrom )%><br/>  Uptime: 
 								<%
 								double uptime = rMXBean.getUptime() / 1000d;
-								int weeks = (int)(uptime / 86400 / 7);
-								int days = (int)(uptime / 86400 % 7);
+								int days = (int)(uptime / 86400);
 								int hours = (int)(uptime / 3600 % 24);
 								int minutes = (int)(uptime / 60 % 60); 
 								int seconds = (int)(uptime % 60);
