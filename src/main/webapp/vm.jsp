@@ -333,6 +333,8 @@ h1{text-align:center;font-family:Verdana;height:65%;line-height:1.5em;font-size:
 .menu li a{display:block;width:100%;height:100%; text-decoration: none;color: #000;}
 .menu .selected{border-left:1px solid #CEE3F6;border-right:1px solid #CEE3F6;border-top:1px solid #CEE3F6;background-color:#CEE3F6;}
 .cellaMemoriaMassima{border-top:1px solid red;background-color:green}
+.cellaMemoriaMassima.unlimited{border-top:0px solid transparent;}
+
 .cellaMemoriaOccupata{background-color:#0F0}
 .success{color:#0B610B}
 .tabLabelContainer{}
@@ -493,7 +495,7 @@ a){var b=F.exec(a);b&&(b[1]=(b[1]||"").toLowerCase(),b[3]=b[3]&&new RegExp("(?:^
 								</div>
 							
 							    <% double load = ManagementFactory.getOperatingSystemMXBean().getSystemLoadAverage() * 100D; %>
-								<div>System Load Average: <%= formatter.format(load)%>%</div>
+								<div>System Load Average: <%= load < 0 ? "Unavailable" : formatter.format(load) + "%" %></div>
 								
 								<%
 								ThreadMXBean tMXBean = ManagementFactory.getThreadMXBean();
@@ -553,6 +555,8 @@ a){var b=F.exec(a);b&&(b[1]=(b[1]||"").toLowerCase(),b[3]=b[3]&&new RegExp("(?:^
 						long max = mu.getMax();
 						long comm = mu.getCommitted();
 						long used = mu.getUsed();
+						boolean unlimited = max <= 0;
+						if(unlimited)max = comm;
 						int percComm = (int) ((comm * 100) / max);
 						int percUsed = (int) ((used * 100) / max);
 						
@@ -561,19 +565,19 @@ a){var b=F.exec(a);b&&(b[1]=(b[1]||"").toLowerCase(),b[3]=b[3]&&new RegExp("(?:^
 				%>
 				<div class="memoryUsageBar" style="width: <%=graphPercWidth%>%;">
 					<div class="graph">
-						<div class="cellaMemoriaMassima"
+						<div class="cellaMemoriaMassima <%= unlimited ? "unlimited" : "" %>"
 							style="height: <%=100 - percComm%>%;"></div>
 						<div class="cellaMemoriaAllocata"
 							style="height: <%=percComm - percUsed%>%;"></div>
 						<div class="cellaMemoriaOccupata" style="height: <%=percUsed%>%;"></div>
 					</div>
 					<div class="title" title="Type: <%= item.getType()%>
-Max: <%= formatter.format(max/1024)%> Kb
+Max: <%= unlimited ? "Unlimited" : formatter.format(max/1024) + " Kb"%>
 Committed: <%= formatter.format(comm/1024) %> Kb
     Free: <%= formatter.format((comm - used)/1024)%> Kb
     Used: <%= formatter.format(used/1024) %> Kb
 Garbage Collectors: <%= garbageCollectors%>
-"><%=item.getName()%></div>
+"><%= item.getName()%></div>
 				</div>
 				<% } %>
 				<%
